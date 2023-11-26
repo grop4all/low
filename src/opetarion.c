@@ -30,6 +30,9 @@ void insert(file* file, doc* doc) {
     resize(list, file);
   }
 
+  // if (list->list[i].size != 0 && list->list->size <= ) { 
+
+  // }
   fseek(file->F, file->endpos, SEEK_SET); // до delete update endpos = sec_end
   if ((offset = writedoc(file, doc))) {
 
@@ -46,13 +49,14 @@ void insert(file* file, doc* doc) {
 
 bool delete(file* file, uint64_t index) {
 
-  // listnode l = file->list;
+  // listnode* l = file->list;
 
   // listnode* list = file->list;
 
   // if (index >= list->count) return false;
 
   // list->list[index].empty = 1;
+
 
   uint64_t oldpos = ftello(file->F);
   listnode* list = file->list;

@@ -3,7 +3,8 @@ CFLAGS= -D_LARGEFILE_SOURCE=1 -D_FILE_OFFSET_BITS=64
 
 
 
-all: clear doc
+all: 
+	gcc *.c -D_LARGEFILE_SOURCE=1 -D_FILE_OFFSET_BITS=64 && ./a.out && rm a.out
 
 
 
