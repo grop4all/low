@@ -1,0 +1,24 @@
+{
+    "files.associations": {
+        "inode.h": "c",
+        "listnode.h": "c",
+        "array": "c",
+        "string_view": "c",
+        "initializer_list": "c",
+        "filemanager.h": "c",
+        "irootnode.h": "c",
+        "atomic": "c",
+        "*.tcc": "c",
+        "concepts": "c",
+        "type_traits": "c",
+        "functional": "c",
+        "new": "c",
+        "numeric": "c",
+        "ostream": "c",
+        "system_error": "c",
+        "tuple": "c",
+        "typeinfo": "c",
+        "utility": "c"
+    },
+    "cmake.configureOnOpen": true
+}
