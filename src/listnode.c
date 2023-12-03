@@ -1,72 +1,64 @@
 #include "listnode.h"
 #include "filemanager.h"
-#include "irootnode.h"
 #include "doc.h"
+#include "inode.h"
 
 
-listnode *createlistnode(int64_t count)
-{
-  listnode *list = malloc(sizeof(listnode));
-  inode *ptr = inode_malloc(count);
-  list->count = count;
-  list->list = ptr;
-  for (int64_t i = 0; i < list->count; ++i)
-  {
-    inode *tmp = list->list + i;
-    tmp->empty = 1;
-    tmp->id = i;
-    tmp->parent = 0;
-    tmp->size = 0;
-    tmp->pos = 0;
-  }
+#include "stdlib.h"
 
-  // for (int64_t i = 0; i < 10; ++i) {
-  //   inode *tmp = list->list + i;
-  //   printf("%d ",tmp->empty);
-  //   printf("%d ",tmp->id);
-  //   printf("%d ",tmp->parent);
-  //   printf("%d ",tmp->size);
-  //   printf("%d \n",tmp->pos);
-  // }
-  return list;
+
+
+
+
+bool createlistnode(file* file) {
+    file->list = malloc(sizeof(listnode));
+    if ((file->list->list = inode_malloc(file->header.count)))
+    {
+        for (uint64_t i = 0; i < file->header.count; ++i) {
+            inode* tmp = file->list->list + i;
+            tmp->status = OPEN;
+            tmp->size = 0;
+            tmp->id = i;
+            tmp->parent = 0;
+            tmp->pos = 0;
+        }
+    }
 }
 
-listnode* readlistnode(file *file, int64_t count)
+
+
+
+bool readlistnode(file *file)
 {
   uint64_t pos = ftello(file->F);
-  fseek(file->F, sizeof(irootnode), SEEK_SET);
+  fseek(file->F, sizeof(head), SEEK_SET);
   listnode *l = malloc(sizeof(listnode));
-  inode *ptr = inode_malloc(count);
-  if (fread(ptr, sizeof(inode), count, file->F))
+  inode *ptr = inode_malloc(file->header.count);
+  if (fread(ptr, sizeof(inode), file->header.count, file->F))
   {
-    l->count = count;
+    l->count = file->header.count;
     l->list = ptr;
+    file->list = l;
+    fseek(file->F, pos, SEEK_SET);
+    return true;
   }
   fseek(file->F, pos, SEEK_SET);
-  return l;
-}
-
-bool writelistnode(listnode *list, file *file)
-{
-  uint64_t pos = ftello(file->F);
-  fseek(file->F, sizeof(irootnode), SEEK_SET);
-  if (fwrite(list->list, sizeof(inode), list->count, file->F))
-  {
-    fseek(file->F, pos, SEEK_SET);
-    // return true;
-  }
-  //   for (int64_t i = 0; i < 10; ++i) {
-  //   inode *tmp = list->list + i;
-  //   printf("%d ",tmp->empty);
-  //   printf("%d ",tmp->id);
-  //   printf("%d ",tmp->parent);
-  //   printf("%d ",tmp->size);
-  //   printf("%d \n",tmp->pos);
-  // }
   return false;
 }
 
-// может переписать
+bool writelistnode(file *file)
+{
+  uint64_t pos = ftello(file->F);
+  fseek(file->F, sizeof(head), SEEK_SET);
+  if (fwrite(file->list->list, sizeof(inode), file->header.count, file->F))
+  {
+    fseek(file->F, pos, SEEK_SET);
+    return true;
+  }
+  return false;
+}
+
+// // может переписать
 bool resize(listnode *list, file *f)
 {
   uint64_t precheercount = list->count << 1;
@@ -79,10 +71,11 @@ bool resize(listnode *list, file *f)
   }
   for (uint64_t j = 0; j < i; ++j)
   {
-    doc *d = createdoc(0);
+    doc *d = malloc(sizeof(doc));
+    fseek(f->F, list->list[j].pos, SEEK_SET);
     readoc(f, d);
     uint64_t pos = ftello(f->F);
-    fseek(f->F, f->endpos, SEEK_SET);
+    fseek(f->F, f->header.endpos, SEEK_SET);
     writedoc(f, d);
   }
   
@@ -91,7 +84,7 @@ bool resize(listnode *list, file *f)
   for (uint64_t i = list->count; i < precheercount; ++i)
   {
     inode* tmp = list->list + i;
-    tmp->empty = 1;
+    tmp->status = OPEN;
     tmp->size = 0;
     tmp->id = i;
     tmp->parent = 0;

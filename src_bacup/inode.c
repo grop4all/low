@@ -1,10 +1,9 @@
 #include "inode.h"
 
-inode* create_inode() {
+inode* createinode() {
   inode* ptr = inode_malloc(1);
   ptr->status = OPEN;
   ptr->id = 0;
-  ptr->parent = 0;
   ptr->size = 0;
   ptr->pos = 0;
   return ptr;

@@ -5,9 +5,11 @@ CFLAGS= -D_LARGEFILE_SOURCE=1 -D_FILE_OFFSET_BITS=64
 
 
 all: 
-	gcc *.c -D_LARGEFILE_SOURCE=1 -D_FILE_OFFSET_BITS=64 -g && ./a.out && rm a.out
+	gcc *.c -g -D_LARGEFILE_SOURCE=1 -D_FILE_OFFSET_BITS=64 
 
 
+test: a.out
+	./a.out > temi
 
 doc: doc.c doc.h
 	$(CC) -c $(CFLAGS) doc.c
@@ -24,6 +26,7 @@ irootnode: irootnode.c irootnode.h
 
 clear:
 	rm -f *.h.gch *.o
+	rm a.out
 
 
 

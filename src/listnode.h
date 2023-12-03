@@ -16,9 +16,9 @@ typedef struct listnode {
 } listnode;
 
 
-listnode* createlistnode(int64_t count);
-listnode* readlistnode(file* f, int64_t count);
-bool writelistnode(listnode* list, file* file);
+bool createlistnode(file* file);
+bool readlistnode(file* f);
+bool writelistnode(file* file);
 bool resize(listnode* list1, file* f);
 
 

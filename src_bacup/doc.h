@@ -34,17 +34,26 @@ typedef union elem {
   string string_;
 } elem;
 
-typedef struct doc {
+typedef struct meta {
+  uint64_t id;
+  uint64_t size;
+  int64_t child;
   uint64_t count;
-  elementType* typelist;
+} meta;
+
+typedef struct doc {
+  meta meta;
+  int8_t* typelist;
   elem* elemlist;
 } doc;
 
+uint64_t get_idoc(file* file);
+uint64_t get_sizedoc(file* file);
 
 bool addelem (doc* d, elementType type, elem elem);
-doc* createdoc();
-bool readoc (file* f, doc* d);
-uint64_t writedoc(file* f, doc* d);
+doc* createdoc(uint64_t count);
+doc* readoc(file* file, uint64_t index);
+uint64_t writedoc(file* f, doc* d, uint64_t);
 void printdoc(doc* d);
 bool updatestring(file* file, uint64_t indexdoc, uint64_t indexelem, doc *d, elem value);
 uint64_t calcdoc(doc* d);
